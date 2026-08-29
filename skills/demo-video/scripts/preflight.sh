@@ -6,7 +6,6 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 CFG(){ python3 "$HERE/_cfgsh.py" "$1"; }
 REPO="${REPO:-$(CFG repo)}"
 ENTRY="$REPO/$(CFG entry_js)"
-PKG="$(CFG package)"
 
 echo "== 1. patch the dev warning overlay out of the build (React Native only) =="
 # ignoreAllLogs() is NOT enough: it leaves console.error banners and the full-screen
@@ -37,8 +36,12 @@ PY
 fi
 
 echo "== 2. rebuild + install (debug APK bakes the JS bundle; editing source alone does nothing) =="
-( cd "$REPO" && eval "$(CFG build_cmd)" ) >/tmp/demo-preflight-build.log 2>&1 \
-  && echo "   build OK" || { echo "   BUILD FAILED - see /tmp/demo-preflight-build.log"; exit 1; }
+if ( cd "$REPO" && eval "$(CFG build_cmd)" ) >/tmp/demo-preflight-build.log 2>&1; then
+  echo "   build OK"
+else
+  echo "   BUILD FAILED - see /tmp/demo-preflight-build.log" >&2
+  exit 1
+fi
 
 echo "== 3. device settings =="
 adb shell settings put system show_touches 0     # we draw our own pointer in post
@@ -53,13 +56,32 @@ echo "   show_touches off, screen stays on, DND on, soft keyboard disabled"
 
 echo "== 4. cache the whisper model at a stable path (verifies the narration later) =="
 MODEL="$HOME/.cache/whisper/ggml-base.en.bin"
+MODEL_URL="https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin"
+# Pinned: sha256 of the published LFS object (Hugging Face reports it as x-linked-etag). Without
+# this a truncated or substituted download is fed straight to whisper-cli, and every sentence
+# span the whole video is cut to comes from that model.
+MODEL_SHA256="a03779c86df3323075f5e796cb2ce5029f00ec8869eee3fdfb897afe36c6d002"
 mkdir -p "$(dirname "$MODEL")"
-if [ ! -s "$MODEL" ]; then
-  command -v whisper-cli >/dev/null || brew install whisper-cpp
-  curl -sL -o "$MODEL" https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
-  echo "   model downloaded"
+model_ok(){ [ -s "$1" ] && [ "$(shasum -a 256 "$1" | cut -d' ' -f1)" = "$MODEL_SHA256" ]; }
+
+if ! command -v whisper-cli >/dev/null; then
+  echo "   whisper-cli not found - installing whisper-cpp via brew"
+  brew install whisper-cpp
+fi
+
+if model_ok "$MODEL"; then
+  echo "   model cached, checksum OK"
 else
-  echo "   model cached"
+  [ -s "$MODEL" ] && echo "   cached model FAILED checksum - refetching"
+  TMP="$(mktemp "${MODEL}.XXXXXX")"
+  curl -fsSL -o "$TMP" "$MODEL_URL"
+  if ! model_ok "$TMP"; then
+    rm -f "$TMP"
+    echo "   DOWNLOADED MODEL FAILED CHECKSUM - refusing to use it" >&2
+    exit 1
+  fi
+  mv "$TMP" "$MODEL"
+  echo "   model downloaded, checksum OK"
 fi
 echo
 echo "PREFLIGHT DONE. Leave the IME alone (see SKILL.md gotcha 5) and do not revert"
