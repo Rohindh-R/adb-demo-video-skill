@@ -18,7 +18,7 @@ From this repo, using the [skills.sh](https://skills.sh) CLI — it copies the w
 directory, `scripts/` and `templates/` included:
 
 ```bash
-npx skills add <owner>/adb-demo-video-skill --agent claude-code
+npx skills add Rohindh-R/adb-demo-video-skill --agent claude-code
 ```
 
 That writes `.claude/skills/demo-video/` next to your project and records it in
