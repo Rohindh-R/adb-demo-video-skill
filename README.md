@@ -37,6 +37,37 @@ sentence alignment, and a TTS key (or bring your own `vo_master.wav`).
 
 ---
 
+## What it does to your machine
+
+Read this before installing. Automated scanners flag some of it, correctly - it is worth knowing
+which parts are deliberate.
+
+**It executes Python from your demo directory.** `plan.py`, `claims.py` and `highlights.py` are
+yours to write, and `rec.py`, `audit.py` and `annots.py` import and run them. That is the plugin
+seam the whole kit is built on, and it means the kit will run whatever those files contain. Keep
+your demo directory as trusted as any other code you run.
+
+**`preflight.sh` writes to your app repo and your device.** It patches LogBox out of your RN
+entry file (backing it up to `.demo-backup`), runs the `build_cmd` from your `demo.config.json`
+through `eval`, and changes device settings. `restore.sh` undoes it. A hostile
+`demo.config.json` is a hostile shell command, so treat that file as code too.
+
+**It downloads one model.** `ggml-base.en.bin` from Hugging Face, into `~/.cache/whisper/`,
+verified against a pinned sha256 - a mismatch aborts rather than proceeds. `whisper-cpp` is
+installed via `brew` if missing.
+
+**Credentials, if you use the optional steps.** `voice.py` reads `~/.gemini-token` and sends
+your narration script to Google's TTS API. `tg.py` reads `~/.telegram-token` and uploads the
+finished video and thumbnail to the chat you configured. Both read from `0600` files in `$HOME`,
+never from the repo. Neither token is printed or passed as a command-line argument. Skip both and
+the kit still works: supply your own `vo_master.wav`, and collect the mp4 from the output
+directory.
+
+**Nothing else leaves the machine.** No telemetry, no analytics, no network calls beyond the
+three above.
+
+---
+
 ## Quickstart
 
 ```bash

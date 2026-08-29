@@ -6,8 +6,9 @@ records the video as 320x320 / duration 0, and the player then squeezes a 16:10 
 horizontally - which is exactly what happened the first time. A small JPEG thumbnail is also
 required or the chat shows a grey placeholder.
 
-Credentials come from ~/.telegram-token (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID) and are never
-printed. Captions go as PLAIN TEXT: an underscore in something like TABLE_45 breaks Markdown
+Credentials come from ~/.telegram-token (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID). They are never
+printed, and never passed as command-line arguments - the token would otherwise sit in the
+sendVideo URL, where any local `ps` could read it. Captions go as PLAIN TEXT: an underscore in something like TABLE_45 breaks Markdown
 parsing and the API rejects the whole request.
 
     tg.py <video.mp4> <thumb.jpg> "caption text"
@@ -35,14 +36,17 @@ def probe(path):
 def main(video,thumb,caption):
     tok,chat=creds()
     w,h,dur=probe(video)
-    r=subprocess.run(['curl','-sS','-X','POST',
-        f"https://api.telegram.org/bot{tok}/sendVideo",
+    # The URL carries the bot token, so it reaches curl through a config file on stdin (-K -)
+    # instead of argv. Nothing else here is secret; a chat id is useless without the token.
+    r=subprocess.run(['curl','-sS','-K','-','-X','POST',
         '-F',f"chat_id={chat}",
         '-F',f"video=@{video}",
         '-F',f"thumbnail=@{thumb}",
         '-F',f"width={w}",'-F',f"height={h}",'-F',f"duration={dur}",
         '-F','supports_streaming=true',
-        '-F',f"caption={caption}"],capture_output=True,text=True)
+        '-F',f"caption={caption}"],
+        input=f'url = "https://api.telegram.org/bot{tok}/sendVideo"\n',
+        capture_output=True,text=True)
     ok=False
     try:
         j=json.loads(r.stdout); ok=j.get('ok',False)
