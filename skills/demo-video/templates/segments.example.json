@@ -1,0 +1,10 @@
+[
+ {"n": 1,  "name": "WELCOME",   "text": "Welcome to Acme POS, the app that looks after your kitchen, your stations, and all of your routing rules. In this video, we are going to look at Order Routing."},
+ {"n": 2,  "name": "AGENDA",    "text": "Order Routing has moved across from the Kitchen app, and it now lives here. We will build out a set of rules, work through every tool in the panel in turn, and see how the app protects orders that are already cooking."},
+ {"n": 3,  "name": "HOME",      "text": "This is the Acme POS home screen. Your features sit at the top, and every store setting sits below them."},
+ {"n": 4,  "name": "ENTRY",     "text": "You will find Order Routing under Settings, and then Kitchen. It opens straight onto your live rule set."},
+ {"n": 5,  "name": "OVERVIEW",  "text": "This is your kitchen, laid out to scale, with every station where it really sits. More than one zone is supported. Switch between them at the top, or create a new one with Add Zone."},
+ {"n": 6,  "name": "TOOLBOX",   "text": "Everything you build with is on the right, and we will work down it in order. Rules and rule groups. Stations. Zone settings. Priorities and labels. Then order statuses, and shifts."},
+ {"n": 7,  "name": "RULE",      "text": "Start with a rule. One tap adds it, and you drag it exactly where it belongs. Selecting it opens the editor, where you give it the name your staff will call it, and set its window and priority to match the real service."},
+ {"n": 21, "name": "OUTRO",     "text": "So, to recap. You can lay out every zone, build it up with rules, stations, priorities and labels, style each one to match the kitchen, define your own order statuses, group stations into shifts, and trust that live orders are protected. Thanks for watching."}
+]

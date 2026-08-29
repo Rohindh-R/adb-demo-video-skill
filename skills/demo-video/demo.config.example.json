@@ -1,0 +1,73 @@
+{
+  "_comment": "Copy to demo.config.json in your demo working directory and edit. Every value the harness needs that is specific to YOUR app lives here; nothing else does.",
+
+  "project":  "Acme POS",
+  "ticket":   "ACME-1234",
+
+  "package":  "com.acme.pos",
+  "repo":     "~/code/acme-pos",
+  "entry_js": "index.js",
+  "build_cmd": "npm run android",
+
+  "_comment_entry": "entry_js is the React Native entry file, patched to remove the dev warning overlay during recording. Leave it \"\" for a non-RN app or if there is no overlay to remove.",
+
+  "ime": "com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME",
+  "_comment_ime": "Disabled during recording: it stops the soft keyboard covering the screen AND makes `input text` deterministic. Restored in phase 6.",
+
+  "device": { "width": 2560, "height": 1600 },
+  "video":  { "width": 1920, "height": 1200, "fps": 30 },
+  "_comment_size": "device = what `adb exec-out screencap` produces. video = the render size, same aspect ratio.",
+
+  "screen_guard": "APP_SomeControl_OnlyOnThisScreen",
+  "panel_close":  "APP_Panel_Close",
+  "_comment_guard": "screen_guard is a testID present on the screen being demoed and nowhere else - the recorder refuses to act without it, which is what stops one missed tap from wrecking a take. panel_close is the editor's close control, used by the `closepanel` action so it never taps blind. Leave \"\" if the screen has no panel.",
+
+  "brand": {
+    "app": "Acme POS",
+    "title": "Order Routing",
+    "subtitle": "route orders to the right kitchen",
+    "accent": [76, 190, 110],
+    "badge": "PRODUCT  DEMO"
+  },
+
+  "cards": {
+    "brand_sub": "Acme POS 3.0",
+    "title_lines": ["Order", "Routing"],
+    "subtitle_lines": ["Send every order", "to the right kitchen"],
+    "badge": "PRODUCT  DEMO",
+    "agenda_heading": "What we'll cover",
+    "agenda": [
+      "Where routing lives",
+      "The rules you build it from",
+      "Priorities you define yourself",
+      "Stations, for assigning to staff",
+      "Live orders, protected from mistakes"
+    ],
+    "outro_heading": "What you can now do",
+    "outro": [
+      "Route by station, to scale",
+      "Build rules from time, item and channel",
+      "Define your own priorities",
+      "Group stations into zones",
+      "Live orders are protected from edits"
+    ],
+    "find_it_under": "Settings  ›  Kitchen  ›  Order Routing",
+    "closing": "Thanks for watching"
+  },
+
+  "chips": {
+    "4": "Settings  \u203a  Kitchen  \u203a  Order Routing",
+    "5": "Rules  \u00b7  multiple zones",
+    "7": "Add a rule  \u00b7  place it  \u00b7  size it"
+  },
+  "_comment_chips": "Optional caption chip per beat, keyed by beat number. Omit for no chips.",
+
+  "output": { "name": "Order_Routing_Demo", "dir": "~/Desktop/acme-order-routing-demo" },
+
+  "canvas": {
+    "enabled": false,
+    "bounds": [30, 130, 1858, 1560],
+    "item_prefix": "Item_",
+    "_comment": "Only for apps whose demo drags items around a layout. bounds is the DRAGGABLE area, measured by dragging one item hard against each edge - not read off the painted edge."
+  }
+}

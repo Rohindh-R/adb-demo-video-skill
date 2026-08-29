@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "organization": "Independent",
+  "date": "August 2026",
+  "abstract": "Records an Android app screen over ADB and cuts it to a narrated voiceover so that every sentence is shown while it is spoken. Aligns the script against a Whisper transcript of the shipped audio for millisecond-accurate sentence spans, anchors each recorded gesture to the sentence that promises it, paces by trimming still stretches rather than inserting freeze-frames, and enforces the result with three gates: a narration/visual contract, a beat-seam check, and an intrusion check on the raw clips. Produces a 1920x1200 mp4 with intro/agenda/outro cards, a drawn-on touch pointer, element highlights, burned-in subtitles, a transcript and an SRT. Carries eleven documented ADB/screenrecord traps, each of which shipped a broken video before it was understood.",
+  "references": [
+    "https://developer.android.com/tools/adb",
+    "https://developer.android.com/studio/command-line/adb#screenrecord",
+    "https://ffmpeg.org/ffmpeg-filters.html#trim",
+    "https://ffmpeg.org/ffmpeg-filters.html#tpad",
+    "https://github.com/ggerganov/whisper.cpp"
+  ]
+}
